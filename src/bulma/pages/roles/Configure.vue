@@ -51,9 +51,9 @@
 
 <script>
 import { Fade } from '@enso-ui/transitions';
-import { mapState } from 'vuex';
 import cssClass from '@enso-ui/permissions/src/bulma/modules/permission';
 import { CheckboxManager } from '@enso-ui/checkbox/bulma';
+import { useStore } from '../../../utils/pinia';
 
 export default {
     name: 'Configure',
@@ -69,7 +69,9 @@ export default {
     }),
 
     computed: {
-        ...mapState(['enums']),
+        enums() {
+            return useStore('enums').enums;
+        },
     },
 
     created() {
