@@ -1,4 +1,4 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faUniversalAccess } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faUniversalAccess } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faUniversalAccess);
+library.add(faSave, faUniversalAccess);
