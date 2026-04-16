@@ -2,71 +2,61 @@
     <div class="columns is-centered">
         <div class="column is-three-quarters-desktop is-full-touch">
             <enso-form class="box"
-                @ready="ready = true"
+                @ready="handleReady"
                 ref="form">
                 <template #actions-left
                     v-if="ready">
-                    <div class="level-item">
-                        <a class="button is-warning"
-                            @click="$router.push({
-                                name: 'system.roles.configure',
-                                params: { role: $refs.form.routeParam('role') }
-                            }).catch(routerErrorHandler)">
-                            <span class="is-hidden-mobile">
-                                {{ i18n('Configure') }}
-                            </span>
-                            <span class="icon">
-                                <fa :icon="faSliders"/>
-                            </span>
-                            <span class="is-hidden-mobile"/>
-                        </a>
-                    </div>
-                    <div class="level-item">
-                        <a class="button is-link"
-                            @click="writeConfig">
-                            <span class="is-hidden-mobile">
-                                {{ i18n('File') }}
-                            </span>
-                            <span class="icon">
-                                <fa :icon="faFloppyDisk"/>
-                            </span>
-                            <span class="is-hidden-mobile"/>
-                        </a>
-                    </div>
+                     <action tag="a"
+                        :button="{
+                            class: 'is-dark',
+                            icon: faSliders,
+                            label: 'Configure',
+                        }"
+                        @click="configure"/>
+                     <action tag="a"
+                        :button="{
+                            class: 'is-dark',
+                            icon: faFloppyDisk,
+                            label: 'File',
+                        }"
+                        @click="writeConfig"/>
                 </template>
             </enso-form>
         </div>
     </div>
 </template>
 
-<script>
-import { FontAwesomeIcon as Fa } from '@fortawesome/vue-fontawesome';
+<script setup>
+import { inject, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { faFloppyDisk, faSliders } from '@fortawesome/free-solid-svg-icons';
-import { EnsoForm } from '@enso-ui/forms/bulma';
+import { EnsoForm, Action } from '@enso-ui/forms/bulma';
 
-export default {
-    name: 'Edit',
+const errorHandler = inject('errorHandler');
+const http = inject('http');
+const i18n = inject('i18n');
+const route = inject('route');
+const routerErrorHandler = inject('routerErrorHandler');
+const toastr = inject('toastr');
 
-    components: { EnsoForm, Fa },
+const router = useRouter();
+const form = ref(null);
+const ready = ref(false);
 
-    inject: [
-        'errorHandler', 'http', 'i18n', 'route', 'routerErrorHandler', 'toastr',
-    ],
+const handleReady = () => {
+    ready.value = true;
+};
 
-    data: () => ({
-        faFloppyDisk,
-        faSliders,
-        ready: false,
-    }),
+const configure = () => router.push({
+    name: 'system.roles.configure',
+    params: { role: form.value.routeParam('role') },
+}).catch(routerErrorHandler);
 
-    methods: {
-        writeConfig() {
-            this.http.post(this.route(
-                'system.roles.permissions.write',
-                this.$refs.form.routeParam('role'),
-            )).then(({ data }) => this.toastr.success(data.message))
-                .catch(this.errorHandler);
-        },
-    },
+const writeConfig = () => {
+    http.post(route(
+        'system.roles.permissions.write',
+        form.value.routeParam('role'),
+    )).then(({ data }) => toastr.success(data.message))
+        .catch(errorHandler);
 };
 </script>

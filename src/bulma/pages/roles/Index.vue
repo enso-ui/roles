@@ -1,21 +1,27 @@
 <template>
     <enso-table class="box p-0"
         id="roles"
-        @configure-role="$router.push({
-            name: 'system.roles.configure',
-            params: { role: $event.id },
-        }).catch(routerErrorHandler)"
-        @write-config-file="toastr.success($event.message)"/>
+        @configure-role="configureRole"
+        @write-config-file="writeConfigFile"/>
 </template>
 
-<script>
+<script setup>
+import { inject } from 'vue';
+import { useRouter } from 'vue-router';
 import { EnsoTable } from '@enso-ui/tables/bulma';
 
-export default {
+defineOptions({
     name: 'Index',
+});
 
-    components: { EnsoTable },
+const router = useRouter();
+const routerErrorHandler = inject('routerErrorHandler');
+const toastr = inject('toastr');
 
-    inject: ['routerErrorHandler', 'toastr'],
-};
+const configureRole = ({ id }) => router.push({
+    name: 'system.roles.configure',
+    params: { role: id },
+}).catch(routerErrorHandler);
+
+const writeConfigFile = ({ message }) => toastr.success(message);
 </script>
