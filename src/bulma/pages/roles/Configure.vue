@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { enums as useEnums } from '@enso-ui/enums/src/pinia/enums';
+import { enums } from '@enso-ui/enums/src/pinia/enums';
 import { Fade } from '@enso-ui/transitions';
 import cssClass from '@enso-ui/permissions/src/bulma/modules/permission';
 import { CheckboxManager } from '@enso-ui/checkbox/bulma';
@@ -70,7 +70,7 @@ export default {
 
     computed: {
         enums() {
-            return useEnums().enums;
+            return enums().enums;
         },
     },
 
